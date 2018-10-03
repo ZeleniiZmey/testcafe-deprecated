@@ -6,16 +6,19 @@ const babel = require('gulp-babel');
 const mocha = require('gulp-mocha');
 const del = require('del');
 
-gulp.task('clean', (cb) => {
-  del('lib', cb);
-});
+function clean(cb) {
+  return del(['lib', cb]);
+}
 
-gulp.task('build', ['clean'], () => gulp
-  .src('src/**/*.js')
-  .pipe(babel())
-  .pipe(gulp.dest('lib')));
+function build() {
+  return gulp.src('src/**/*.js')
+    .pipe(babel())
+    .pipe(gulp.dest('lib'));
+}
 
-gulp.task('test', ['build'], () => {
+gulp.task('build', gulp.series(clean), build);
+
+function test() {
   process.env.NODE_ENV = 'test';
   return gulp
     .src('test/**.js')
@@ -24,9 +27,11 @@ gulp.task('test', ['build'], () => {
       reporter: 'spec',
       timeout: typeof v8debug === 'undefined' ? 2000 : Infinity, // NOTE: disable timeouts in debug
     }));
-});
+}
 
-gulp.task('preview', ['build'], () => {
+gulp.task('test', gulp.series(build), test);
+
+function preview() {
   const { buildReporterPlugin } = require('testcafe').embeddingUtils;
   const pluginFactory = require('./lib');
   const reporterTestCalls = require('./test/utils/reporter-test-calls');
@@ -35,6 +40,15 @@ gulp.task('preview', ['build'], () => {
   reporterTestCalls.forEach((call) => {
     plugin[call.method](...call.args);
   });
+}
 
-  process.exit(0);
-});
+gulp.task('preview', gulp.series(build), preview);
+
+exports.default = clean;
+
+module.exports = {
+  preview,
+  build,
+  test,
+  clean,
+};
