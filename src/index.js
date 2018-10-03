@@ -23,7 +23,7 @@ if (fs.existsSync(`${dirname}/../../tcr-html.config.js`)) {
   config.outputPath = newConfig.outputPath ? newConfig.outputPath : config.outputPath;
 }
 
-export default function () {
+function defaultFunction() {
   return {
     noColors: true,
     startTime: null,
@@ -167,3 +167,5 @@ export default function () {
     },
   };
 }
+
+module.exports = defaultFunction;

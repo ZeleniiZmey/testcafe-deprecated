@@ -40,6 +40,7 @@ function preview() {
   reporterTestCalls.forEach((call) => {
     plugin[call.method](...call.args);
   });
+  process.exit(0);
 }
 
 gulp.task('preview', gulp.series(build), preview);
