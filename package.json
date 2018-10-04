@@ -1,6 +1,6 @@
 {
   "name": "testcafe-reporter-elixir",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "description": "Elixir custom reporter for TestCafe",
   "keywords": [
     "testcafe",
@@ -16,12 +16,6 @@
   "repository": "git@github.com:zeleniizmey/testcafe-reporter-elixir.git",
   "license": "MIT",
   "main": "lib/index",
-  "scripts": {
-    "test": "NODE_ENV=test gulp build && NODE_ENV=test gulp test",
-    "lint": "eslint --fix .",
-    "precommit": "lint-staged",
-    "commitmsg": "commitlint -e $GIT_PARAMS"
-  },
   "scripts": {
     "posttag": "git push --follow-tags origin master && npm publish",
     "publish-please": "publish-please"
