@@ -118,7 +118,7 @@ function defaultFunction() {
       this.tableReports += this.indentString('<td>', 2);
       if (result === 'failed') {
         this.tableReports += this.indentString(`<a href="${testRunInfo.screenshotPath}.png">`, 4);
-        this.tableReports += this.indentString(`<img src="${testRunInfo.screenshotPath}.png" img>\n`, 6);
+        this.tableReports += this.indentString(`<img src="${testRunInfo.screenshotPath}.png" width="400" img>\n`, 6);
         this.tableReports += this.indentString('</a>\n');
       } else {
         this.tableReports += 'no screenshot';
