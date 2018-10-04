@@ -33,7 +33,7 @@ function defaultFunction() {
     table: '',
     tableReports: '',
     testCount: 0,
-    testRunId: 0,
+    testRunId: 1,
     skipped: 0,
 
     reportTaskStart(startTime, userAgents, testCount) {
@@ -54,13 +54,13 @@ function defaultFunction() {
       if (testRunInfo.skipped) { this.skipped += 1; }
 
       this.compileTestTable(testID, name, testRunInfo, hasErr, result);
-      if (hasErr) { this.compileErrors(name, testRunInfo); }
+      if (hasErr) { this.compileErrors(name, testRunInfo, testID); }
     },
 
-    compileErrors(name, testRunInfo) {
+    compileErrors(name, testRunInfo, testID) {
       const heading = `${this.currentFixtureName} - ${name}`;
 
-      this.report += this.indentString(`<h4>${heading}</h4>\n`);
+      this.report += this.indentString(`<h4 id="${testID}">${heading}</h4>\n`);
       testRunInfo.errs.forEach((error) => {
         this.report += this.indentString('<pre>');
         this.report += this.formatError(error, '');
@@ -70,8 +70,8 @@ function defaultFunction() {
 
     compileTestTable(testID, name, testRunInfo, hasErr, result) {
       const lastIndex = `${testRunInfo.screenshotPath}`.lastIndexOf('/');
-      const updateScreenshotPath = `${testRunInfo.screenshotPath}`.slice(0, lastIndex);
-
+      const firstIndex = `${testRunInfo.screenshotPath}`.indexOf('/');
+      const updateScreenshotPath = `${testRunInfo.screenshotPath}`.slice(firstIndex + 1, lastIndex);
       const screenshotPathPattern = `${updateScreenshotPath}/${this.currentFixtureName}/${name}`;
 
       if (hasErr) {
@@ -85,7 +85,7 @@ function defaultFunction() {
       // TestID
       this.tableReports += this.indentString('<td>', 2);
       if (result === 'failed') {
-        this.tableReports += this.indentString(`<a href="#${name}">`, 4);
+        this.tableReports += this.indentString(`<a href="#${testID}">`, 4);
         this.tableReports += testID;
         this.tableReports += '</a>\n';
       } else {
@@ -119,7 +119,7 @@ function defaultFunction() {
       // Screenshot
       this.tableReports += this.indentString('<td>', 2);
       if (result === 'failed') {
-        this.tableReports += this.indentString(`<a href="${testRunInfo.screenshotPath}/${testID}.png">`, 4);
+        this.tableReports += this.indentString(`<a href="${screenshotPathPattern}/${testID}.png">`, 4);
         this.tableReports += this.indentString(`<img src="${screenshotPathPattern}/thumbnails/${testID}.png" img>\n`, 6);
         this.tableReports += this.indentString('</a>\n');
       } else {
