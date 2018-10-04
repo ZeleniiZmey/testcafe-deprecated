@@ -22,11 +22,9 @@
     "precommit": "lint-staged",
     "commitmsg": "commitlint -e $GIT_PARAMS"
   },
-  "standard-version": {
-    "scripts": {
-      "posttag": "git push --follow-tags origin master && npm publish",
-      "publish-please": "publish-please"
-    }
+  "scripts": {
+    "posttag": "git push --follow-tags origin master && npm publish",
+    "publish-please": "publish-please"
   },
   "lint-staged": {
     "*.js": [
