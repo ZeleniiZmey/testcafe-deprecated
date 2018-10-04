@@ -69,7 +69,9 @@ function defaultFunction() {
     },
 
     compileTestTable(testID, name, testRunInfo, hasErr, result) {
-      const screenshotPathPattern = `${testRunInfo.screenshotPath}/${this.startTime}/${this.currentFixtureName}/${name}/`;
+      /** This functionality is not working currently
+        const screenshotPathPattern = `${testRunInfo.screenshotPath}/${this.currentFixtureName}/${name}/`;
+       */
       if (hasErr) {
         this.tableReports += this.indentString('<tr class="danger">\n');
       } else if (testRunInfo.skipped) {
@@ -115,8 +117,8 @@ function defaultFunction() {
       // Screenshot
       this.tableReports += this.indentString('<td>', 2);
       if (result === 'failed') {
-        this.tableReports += this.indentString(`<a href="${screenshotPathPattern}${testID}.png">`, 4);
-        this.tableReports += this.indentString(`<img src="${screenshotPathPattern}/thumbnails/${testID}.png" img>\n`, 6);
+        this.tableReports += this.indentString(`<a href="${testRunInfo.screenshotPath}.png">`, 4);
+        this.tableReports += this.indentString(`<img src="${testRunInfo.screenshotPath}.png" img>\n`, 6);
         this.tableReports += this.indentString('</a>\n');
       } else {
         this.tableReports += 'no screenshot';
