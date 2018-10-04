@@ -47,8 +47,8 @@ function defaultFunction() {
     },
 
     reportTestDone(name, testRunInfo) {
-      const testID = `TEST-${this.testRunId}`;
-      this.testRunId++;
+      const testID = `test-${this.testRunId}`;
+      this.testRunId += 1;
       const hasErr = !!testRunInfo.errs.length;
       const result = hasErr ? 'failed' : 'passed';
       if (testRunInfo.skipped) { this.skipped += 1; }
@@ -69,11 +69,24 @@ function defaultFunction() {
     },
 
     compileTestTable(testID, name, testRunInfo, hasErr, result) {
-      if (hasErr) { this.tableReports += this.indentString('<tr class="danger">\n'); } else if (testRunInfo.skipped) { this.tableReports += this.indentString('<tr class="warning">\n'); } else { this.tableReports += this.indentString('<tr class="success">\n'); }
+      const screenshotPathPattern = `${testRunInfo.screenshotPath}/${this.startTime}/${this.currentFixtureName}/${name}/`;
+      if (hasErr) {
+        this.tableReports += this.indentString('<tr class="danger">\n');
+      } else if (testRunInfo.skipped) {
+        this.tableReports += this.indentString('<tr class="warning">\n');
+      } else {
+        this.tableReports += this.indentString('<tr class="success">\n');
+      }
 
       // TestID
       this.tableReports += this.indentString('<td>', 2);
-      this.tableReports += testID;
+      if (result === 'failed') {
+        this.tableReports += this.indentString(`<a href="#${name}">`, 4);
+        this.tableReports += testID;
+        this.tableReports += '</a>\n';
+      } else {
+        this.tableReports += testID;
+      }
       this.tableReports += '</td>\n';
       // Fixture
       this.tableReports += this.indentString('<td>', 2);
@@ -93,16 +106,21 @@ function defaultFunction() {
       this.tableReports += '</td>\n';
       // Result
       this.tableReports += this.indentString('<td>', 2);
-      if (testRunInfo.skipped) { this.tableReports += 'skipped'; } else { this.tableReports += result; }
+      if (testRunInfo.skipped) {
+        this.tableReports += 'skipped';
+      } else {
+        this.tableReports += result;
+      }
       this.tableReports += '</td>\n';
       // Screenshot
       this.tableReports += this.indentString('<td>', 2);
-      if (testRunInfo.screenshotPath !== null) {
-        this.tableReports += this.indentString(`<a href="${testRunInfo.screenshotPath}/${testID}.png">`, 4);
-        this.tableReports += this.indentString(`<img src="${testRunInfo.thumbnailPath}/${testID}.png" img>\n`, 6);
+      if (result === 'failed') {
+        this.tableReports += this.indentString(`<a href="${screenshotPathPattern}${testID}.png">`, 4);
+        this.tableReports += this.indentString(`<img src="${screenshotPathPattern}/thumbnails/${testID}.png" img>\n`, 6);
         this.tableReports += this.indentString('</a>\n');
+      } else {
+        this.tableReports += 'no screenshot';
       }
-      else { this.tableReports += 'no screenshot'; }
       this.tableReports += '</td>\n';
 
       this.tableReports += this.indentString('</tr>\n');

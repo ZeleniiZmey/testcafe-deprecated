@@ -5,9 +5,22 @@ const gulp = require('gulp');
 const babel = require('gulp-babel');
 const mocha = require('gulp-mocha');
 const del = require('del');
+var eslint  = require('gulp-eslint');
 
 function clean(cb) {
   return del(['lib', cb]);
+}
+
+function lint () {
+  return gulp
+    .src([
+      'src/**/*.js',
+      'test/**/*.js',
+      'Gulpfile.js',
+    ])
+    .pipe(eslint())
+    .pipe(eslint.format())
+    .pipe(eslint.failAfterError());
 }
 
 function build() {
@@ -16,7 +29,7 @@ function build() {
     .pipe(gulp.dest('lib'));
 }
 
-gulp.task('build', gulp.series(clean), build);
+gulp.task('build', gulp.series(clean, lint), build);
 
 function test() {
   process.env.NODE_ENV = 'test';
@@ -52,4 +65,5 @@ module.exports = {
   build,
   test,
   clean,
+  lint,
 };
