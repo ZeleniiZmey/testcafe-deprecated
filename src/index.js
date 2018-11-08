@@ -83,51 +83,53 @@ function defaultFunction() {
       }
 
       // TestID
-      this.tableReports += this.indentString('<td>', 2);
-      if (result === 'failed') {
-        this.tableReports += this.indentString(`<a href="#${testID}">`, 4);
-        this.tableReports += testID;
-        this.tableReports += '</a>\n';
-      } else {
-        this.tableReports += testID;
-      }
-      this.tableReports += '</td>\n';
-      // Fixture
-      this.tableReports += this.indentString('<td>', 2);
-      this.tableReports += this.currentFixtureName;
-      this.tableReports += '</td>\n';
-      // Test
-      this.tableReports += this.indentString('<td>', 2);
-      this.tableReports += name;
-      this.tableReports += '</td>\n';
-      // Browsers
-      this.tableReports += this.indentString('<td>', 2);
-      this.tableReports += this.uaList;
-      this.tableReports += '</td>\n';
-      // Duration
-      this.tableReports += this.indentString('<td>', 2);
-      this.tableReports += this.moment.duration(testRunInfo.durationMs).format('h[h] mm[m] ss[s]');
-      this.tableReports += '</td>\n';
-      // Result
-      this.tableReports += this.indentString('<td>', 2);
-      if (testRunInfo.skipped) {
-        this.tableReports += 'skipped';
-      } else {
-        this.tableReports += result;
-      }
-      this.tableReports += '</td>\n';
-      // Screenshot
-      this.tableReports += this.indentString('<td>', 2);
-      if (result === 'failed') {
-        this.tableReports += this.indentString(`<a href="${screenshotPathPattern}/${testID}.png">`, 4);
-        this.tableReports += this.indentString(`<img src="${screenshotPathPattern}/thumbnails/${testID}.png" img>\n`, 6);
-        this.tableReports += this.indentString('</a>\n');
-      } else {
-        this.tableReports += 'no screenshot';
-      }
-      this.tableReports += '</td>\n';
+      if (result === 'failed' || testRunInfo.skipped) {
+        this.tableReports += this.indentString('<td>', 2);
+        if (result === 'failed') {
+          this.tableReports += this.indentString(`<a href="#${testID}">`, 4);
+          this.tableReports += testID;
+          this.tableReports += '</a>\n';
+        }
+        this.tableReports += '</td>\n';
+        // Fixture
+        this.tableReports += this.indentString('<td>', 2);
+        this.tableReports += this.currentFixtureName;
+        this.tableReports += '</td>\n';
+        // Test
+        this.tableReports += this.indentString('<td>', 2);
+        this.tableReports += name;
+        this.tableReports += '</td>\n';
+        // Duration
+        this.tableReports += this.indentString('<td>', 2);
+        this.tableReports += this.moment.duration(testRunInfo.durationMs).format('h[h] mm[m] ss[s]');
+        this.tableReports += '</td>\n';
+        // Result
+        this.tableReports += this.indentString('<td>', 2);
+        if (testRunInfo.skipped) {
+          this.tableReports += 'skipped';
+        } else if (result === 'failed') {
+          testRunInfo.errs.forEach((error) => {
+            this.tableReports += this.indentString('<div style="width:400px;overflow:auto">');
+            this.tableReports += this.indentString('<pre>');
+            this.tableReports += this.formatError(error, '');
+            this.tableReports += this.indentString('</pre>');
+            this.tableReports += this.indentString('</div>');
+          });
+        }
+        this.tableReports += '</td>\n';
+        // Screenshot
+        this.tableReports += this.indentString('<td>', 2);
+        if (result === 'failed') {
+          this.tableReports += this.indentString(`<a href="${screenshotPathPattern}/${testID}.png">`, 4);
+          this.tableReports += this.indentString('screenshot', 6);
+          this.tableReports += this.indentString('</a>\n');
+        } else {
+          this.tableReports += 'no screenshot';
+        }
+        this.tableReports += '</td>\n';
 
-      this.tableReports += this.indentString('</tr>\n');
+        this.tableReports += this.indentString('</tr>\n');
+      }
     },
 
     reportTaskDone(endTime, passed/* , warnings */) {
@@ -153,20 +155,20 @@ function defaultFunction() {
       html += `<p class="lead">Start Time: ${this.startTime}</p>`;
       html += `<p class="lead">Browsers: ${this.uaList}</p>`;
       html += `<p class="lead">Duration: ${durationStr}</p>`;
-      html += `<p class="lead">Tests Failed: ${failed} out of ${this.testCount}</p>`;
+      html += `<p class="lead">Tests Passed: ${passed}</p>`;
+      html += `<p class="lead">Tests Failed: ${failed}</p>`;
       html += `<p class="lead">Tests Skipped: ${this.skipped}</p>`;
       html += '</div><br>';
 
       // Summary table
-      html += '<table class="table ">';
+      html += '<table class="table" border=1 frame=hsides rules=rows width=80%>';
       html += '<tr>';
-      html += '<th>Test ID</th>';
-      html += '<th>Fixture</th>';
-      html += '<th>Test Name</th>';
-      html += '<th>Browser</th>';
-      html += '<th>Duration</th>';
-      html += '<th>Result</th>';
-      html += '<th>Screenshot</th>';
+      html += '<th width=5%>Test ID</th>';
+      html += '<th width=20%>Fixture</th>';
+      html += '<th width=20%>Test Name</th>';
+      html += '<th width=5%>Duration</th>';
+      html += '<th width=40%>Result</th>';
+      html += '<th width=10%>Screenshot</th>';
       html += '</tr>';
       html += this.tableReports;
       html += '</table>';

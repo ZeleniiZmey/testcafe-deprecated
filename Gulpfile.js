@@ -5,13 +5,13 @@ const gulp = require('gulp');
 const babel = require('gulp-babel');
 const mocha = require('gulp-mocha');
 const del = require('del');
-var eslint  = require('gulp-eslint');
+const eslint = require('gulp-eslint');
 
 function clean(cb) {
   return del(['lib', cb]);
 }
 
-function lint () {
+function lint() {
   return gulp
     .src([
       'src/**/*.js',
